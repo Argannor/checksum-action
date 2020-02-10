@@ -1,15 +1,36 @@
 const core = require('@actions/core');
-const github = require('@actions/github');
+const glob = require('@actions/glob');
+const crypto = require('crypto');
+const fs = require('fs');
 
-try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
-} catch (error) {
-  core.setFailed(error.message);
+function generateChecksum(str, algorithm) {
+  return crypto
+      .createHash(algorithm || 'md5')
+      .update(str, 'utf8')
+      .digest('hex');
 }
+
+function calculateHashForFile(filePath) {
+  fs.readFile(filePath, (err, data) => {
+    const sha1 = generateChecksum(data, "sha1");
+    const sha256 = generateChecksum(data, "sha256");
+    core.setOutput(filePath + "-sha1", sha1);
+    core.setOutput(filePath + "-sha256", sha256);
+  });
+}
+
+async function run() {
+  try {
+    // `who-to-greet` input defined in action metadata file
+    const pattern = core.getInput('glob');
+    const globber = await glob.create(pattern);
+    for await (const filePath of globber.globGenerator()) {
+        calculateHashForFile(filePath);
+    }
+  } catch (error) {
+    core.setFailed(error.message);
+  }
+
+}
+
+run();
