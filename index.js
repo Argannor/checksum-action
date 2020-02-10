@@ -14,8 +14,9 @@ function calculateHashForFile(filePath) {
   fs.readFile(filePath, (err, data) => {
     const sha1 = generateChecksum(data, "sha1");
     const sha256 = generateChecksum(data, "sha256");
-    core.setOutput(filePath + "-sha1", sha1);
-    core.setOutput(filePath + "-sha256", sha256);
+    const varName = filePath.replace(/[\W_]+/g, "");
+    core.setOutput(varName + "-sha1", sha1);
+    core.setOutput(varName + "-sha256", sha256);
   });
 }
 
