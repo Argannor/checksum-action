@@ -1,13 +1,15 @@
 name: 'Hello World'
 description: 'Greet someone and record the time'
 inputs:
-  who-to-greet:  # id of input
-    description: 'Who to greet'
+  glob:  # id of input
+    description: 'Files to be included in calculation'
     required: true
-    default: 'World'
+    default: '**'
 outputs:
-  time: # id of output
-    description: 'The time we we greeted you'
+  filepath-sha1: # id of output
+    description: 'SHA-1 for "filepath"'
+  filepath-sha256: # id of output
+    description: 'SHA-256 for "filepath"'
 runs:
   using: 'node12'
   main: 'index.js'
