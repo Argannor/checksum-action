@@ -29,8 +29,8 @@ function formatFileName(filePath) {
 async function run() {
   try {
     // `who-to-greet` input defined in action metadata file
-    const pattern = core.getInput('glob').split(' ');
-    const globber = await glob.create(pattern);
+    const patterns = core.getInput('glob').split(' ');
+    const globber = await glob.create(patterns.join('\n'));
     const results = [];
     for await (const filePath of globber.globGenerator()) {
         const fileInfo = calculateHashForFile(filePath);
