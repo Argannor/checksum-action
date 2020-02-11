@@ -22,7 +22,7 @@ function calculateHashForFile(filePath) {
 }
 
 function formatFileName(filePath) {
-  const parts = filePath.replace('\\', '/').split('/');
+  const parts = filePath.replace(/\\/g, '/').split('/');
   return parts[parts.length - 1];
 }
 
