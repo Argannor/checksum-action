@@ -10,14 +10,20 @@ function generateChecksum(str, algorithm) {
       .digest('hex');
 }
 
-function calculateHashForFile(filePath) {
-  fs.readFile(filePath, (err, data) => {
-    const sha1 = generateChecksum(data, "sha1");
-    const sha256 = generateChecksum(data, "sha256");
-    const varName = filePath.replace(/[\W_]+/g, "");
-    core.setOutput(varName + "-sha1", sha1);
-    core.setOutput(varName + "-sha256", sha256);
-  });
+async function calculateHashForFile(filePath) {
+  const data = await fs.readFile(filePath);
+  const sha1 = generateChecksum(data, "sha1");
+  const sha256 = generateChecksum(data, "sha256");
+  return {
+    file: filePath,
+    sha1: sha1,
+    sha256: sha256
+  };
+}
+
+function formatFileName(filePath) {
+  const parts = filePath.replace('\\', '/').split('/');
+  return parts[parts.length - 1];
 }
 
 async function run() {
@@ -25,9 +31,17 @@ async function run() {
     // `who-to-greet` input defined in action metadata file
     const pattern = core.getInput('glob');
     const globber = await glob.create(pattern);
+    const results = [];
     for await (const filePath of globber.globGenerator()) {
-        calculateHashForFile(filePath);
+        const fileInfo = calculateHashForFile(filePath);
+        results.push(fileInfo);
     }
+    const output = results
+        .map(checksums => `- ${formatFileName(checksums.file)}
+  - SHA-1: ${checksums.sha1}
+  - SHA-256: ${checksums.sha256}`)
+        .join('\n');
+    core.setOutput('checksums', output);
   } catch (error) {
     core.setFailed(error.message);
   }

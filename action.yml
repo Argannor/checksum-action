@@ -6,10 +6,8 @@ inputs:
     required: true
     default: '**'
 outputs:
-  filepath-sha1: # id of output
-    description: 'SHA-1 for "filepath" (note that non alpha-numeric characters are removed)'
-  filepath-sha256: # id of output
-    description: 'SHA-256 for "filepath" (note that non alpha-numeric characters are removed)'
+  checksums: # id of output
+    description: 'Formatted text containing checksums'
 runs:
   using: 'node12'
   main: 'index.js'
