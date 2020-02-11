@@ -10,8 +10,8 @@ function generateChecksum(str, algorithm) {
       .digest('hex');
 }
 
-async function calculateHashForFile(filePath) {
-  const data = await fs.readFile(filePath);
+function calculateHashForFile(filePath) {
+  const data = fs.readFileSync(filePath);
   const sha1 = generateChecksum(data, "sha1");
   const sha256 = generateChecksum(data, "sha256");
   return {
