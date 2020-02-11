@@ -38,8 +38,8 @@ async function run() {
     }
     const output = results
         .map(checksums => `- ${formatFileName(checksums.file)}
-  - SHA-1: ${checksums.sha1}
-  - SHA-256: ${checksums.sha256}`)
+  - SHA-1: ${checksums.sha1.toUpperCase()}
+  - SHA-256: ${checksums.sha256.toUpperCase()}`)
         .join('\n');
     core.setOutput('checksums', output);
   } catch (error) {
