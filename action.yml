@@ -2,7 +2,7 @@ name: 'Hello World'
 description: 'Greet someone and record the time'
 inputs:
   glob:  # id of input
-    description: 'Files to be included in calculation'
+    description: 'Files to be included in calculation, separate multiple globs by a single space'
     required: true
     default: '**'
 outputs:
